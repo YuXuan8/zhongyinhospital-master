@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <script src="/js/common_css.js"></script>
+</head>
+<title>挂号记录</title>
+<link rel="stylesheet" type="text/css" href="/css/chosen.min.css"/>
+<link rel="stylesheet" type="text/css" href="/css/mcss/mcss_MedicalRecord.css"/>
+<link rel="stylesheet" type="text/css" href="/css/flatpickr.min.css"/>
+<link type="text/css" rel="stylesheet" href="/css/preloader.css">
+</head>
+<body>
+
+<div id="preloader">
+    <div id="preloader-inner"></div>
+</div>
+<div id="wrapper">
+    <div id="content-wrapper" class="d-flex flex-column"><!-- content-wrapper-->
+        <div id="content">
+            <!--正文-->
+            <div>
+                <div class="card shadow mb-4" style="margin-left: 2.5%;height: 818px">
+
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">挂号记录</h6>
+                    </div>
+
+                    <div class="card-body">
+                        <div style=" margin-left: 1%;margin-right: 1%">
+                            <div class="medical_search">
+
+                                <div >
+                                    名称
+                                    <input class="patientOrUserName" placeholder="患者或医生名称">
+                                </div>
+
+                                <div class="medicalRecord-search">
+                                    <button class="btn btn-info" onclick="searchmedicalRecord()">
+                                        <img class="png" src="/images/icon/search.png">
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="medicalRecord"></table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div>
+    <script src="/js/common_js.js"></script>
+    <script type="text/javascript" src="/js/jquery.preloader.min.js"></script>
+    <script type="text/javascript" src="/js/chosen.jquery.min.js"></script>
+    <script type="text/javascript" src="/js/flatpickr.min.js"></script>
+    <script src="/sb-admin-2/bootstrap/bootstrap-table.min.js"></script>
+    <script src="/sb-admin-2/bootstrap/bootstrap-table-zh-CN.js"></script>
+    <script type="text/javascript" src="/js/mjs/mjs_medicalRecord.js?v="+(new Date).getTime()></script>
+</div>
+</body>
+</html>

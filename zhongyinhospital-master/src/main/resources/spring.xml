@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+  	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+ 	 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+    <!-- 配置注解扫描所在的包 -->
+    <context:component-scan base-package="com.pj">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+<!--    占位符解析器-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:db.properties" />
+    </bean>
+    <!-- 加载配数据源配置文件 db.properties -->
+    <context:property-placeholder location="classpath:*.properties" />
+
+    <!-- 配置 C3P0 数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${datasource.driver_class}"/>
+        <property name="jdbcUrl" value="${datasource.url}"/>
+        <property name="user" value="${datasource.username}"/>
+        <property name="password" value="${datasource.password}"/>
+    </bean>
+
+    <!-- 事务管理器 （JDBC） -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 启动声明式事务驱动 -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+
+    <!--SqlSessionFactory 会话工厂交给spring容器管理-->
+    <bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocation" value="classpath:mybatis.xml"/>
+        <!-- 分页插件配置 -->
+        <!-- 引入pagehelper分页插件 -->
+        <property name="plugins">
+            <array>
+                <!-- 引入插件类型 -->
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <!-- 指定使用的数据库-->
+                    <property name="properties">
+                        <!--因为分页插件支持多种数据库,需指明当前所用数据库 ,helperDialect  mysql数据库(方言)-->
+                        <props>
+                            <prop key="helperDialect">mysql</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+
+        <!-- 扫描 po 包，使用别名 -->
+        <property name="typeAliasesPackage" value="com.pj.entity"></property>
+        <!-- 扫描映射文件 -->
+<!--        <property name="mapperLocations" value="classpath:cn/hp/mapper/*.xml"></property>-->
+    </bean>
+
+
+    <!-- 配置扫描 dao 包，动态实现 dao 接口，注入到 spring 容器中, 这里的dao 实际上就是 Mapper接口类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.pj.dao" />
+        <!-- 注意使用 sqlSessionFactoryBeanName 避免出现spring 扫描组件失效问题 -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+
+    <!--配置redis-->
+    <!-- spring data redis -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="usePool" value="true"></property><!--不能使用简写方法，不然读取不到-->
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <!--  <property name="password" value=""/> -->
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="database" value="${redis.default.db}"></property>
+        <constructor-arg   ref="jedisPoolConfig" />
+    </bean>
+
+    <!-- 连接池参数配置 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.maxActive}" />
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <property name="maxWaitMillis" value="${redis.maxWait}" />
+    </bean>
+
+    <!-- 配置redis模板,方便存取数据 -->
+    <!-- <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">-->
+<!--    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">-->
+<!--        <property name="connectionFactory" ref="jedisConnectionFactory" />-->
+<!--    </bean>-->
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
+        </property>
+    </bean>
+
+    <!--=================shiro相关配置====================-->
+
+    <!--配置shiro进行校验时的加密规则-->
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <!--加密规则-->
+        <property name="hashAlgorithmName" value="MD5" />
+        <!--是否加盐-->
+        <property name="hashSalted" value="true" />
+        <!--是否增加哈希算法进行散列-->
+<!--         <property name="hashIterations" value="1024" />-->
+    </bean>
+
+    <!--配置自定义Realm-->
+    <bean id="myRealm" class="com.pj.shiro.MyShiroRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher" />
+    </bean>
+
+    <!--=================记住我功能相关配置====================-->
+    <!--记住我功能的cookie设置-->
+    <bean id="simpleCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <!--设置cookie的属性名-->
+        <property name="name" value="rememberMe" />
+        <!--设置cookie存在根目录，可在同一应用服务器内共享-->
+        <property name="path" value="/" />
+        <!--通过JavaScript脚本将无法读取到Cookie信息，这样能有效的防止XSS攻击，让网站应用更加安全-->
+        <property name="httpOnly" value="true" />
+        <!--设置cookie的失效时间为30天-->
+        <property name="maxAge" value="2592000" />
+    </bean>
+    <!--记住我功能的管理器配置-->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <!--引用cookie设置-->
+        <property name="cookie" ref="simpleCookie" />
+        <!--默认AES算法，设置cookie的加密算法，采用的是base64的加密-->
+        <property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}" />
+    </bean>
+
+    <!-- 用户授权信息Cache(缓存) -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"/>
+
+    <!--配置安全管理器，使用自定义的Realm-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="myRealm" />
+        <!--====引用rememberMe功能管理器====================-->
+        <property name="rememberMeManager" ref="rememberMeManager" />
+        <!--引用缓存-->
+        <property name="cacheManager" ref="cacheManager" />
+    </bean>
+
+    <!--shiro的拦截器-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!--拦截的请求找安全管理器-->
+        <property name="securityManager" ref="securityManager" />
+        <!--配置拦截后登录的请求地址-->
+        <property name="loginUrl" value="/loginUI"/>
+        <!-- 配置我们在登录页登录成功后的跳转地址，如果你访问的是非/login地址，则跳到您访问的地址 -->
+        <property name="successUrl" value="/home"/>
+        <!-- 如果您请求的资源不再您的权限范围，则跳转到/403请求地址 -->
+        <property name="unauthorizedUrl" value="/error"/>
+        <property name="filterChainDefinitions">
+            <value>
+                /=anon
+                /index = anon
+                /dologin = anon
+                /loginUI = anon
+                /logout=logout
+                /role/getRole=anon
+                /doregister=anon
+                /code=anon
+                /api/announcement/**=anon
+                /**/*.js=anon
+                /**/*.css=anon
+                /**/*.png=anon
+                /**/*.jpg=anon
+                /**=authc
+                /**=user
+            </value>
+        </property>
+    </bean>
+</beans>

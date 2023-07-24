@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.MedicalRecordDao">
+
+    <resultMap type="com.pj.entity.MedicalRecord" id="MedicalRecordMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="prescriptionNum" column="prescription_num" jdbcType="VARCHAR"/>
+        <result property="prescription" column="prescription" jdbcType="VARCHAR"/>
+        <result property="drugids" column="drugIds" jdbcType="VARCHAR"/>
+        <result property="conditionDescription" column="condition_description" jdbcType="VARCHAR"/>
+        <result property="diagnosisResult" column="diagnosis_result" jdbcType="VARCHAR"/>
+        <result property="medicalOrder" column="medical_order" jdbcType="VARCHAR"/>
+        <result property="money" column="money" jdbcType="VARCHAR"/>
+        <result property="registerId" column="register_id" jdbcType="INTEGER"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MedicalRecordMap">
+        select id,
+               prescription_num,
+               prescription,
+               drugIds,
+               condition_description,
+               diagnosis_result,
+               medical_order,
+               money,
+               register_id,
+               create_datetime
+        from medical_record
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MedicalRecordMap">
+        select
+        id, prescription_num, prescription, drugIds, condition_description, diagnosis_result, medical_order, money,
+        register_id, create_datetime
+        from medical_record
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="prescriptionNum != null and prescriptionNum != ''">
+                and prescription_num = #{prescriptionNum}
+            </if>
+            <if test="prescription != null and prescription != ''">
+                and prescription = #{prescription}
+            </if>
+            <if test="drugids != null and drugids != ''">
+                and drugIds = #{drugids}
+            </if>
+            <if test="conditionDescription != null and conditionDescription != ''">
+                and condition_description = #{conditionDescription}
+            </if>
+            <if test="diagnosisResult != null and diagnosisResult != ''">
+                and diagnosis_result = #{diagnosisResult}
+            </if>
+            <if test="medicalOrder != null and medicalOrder != ''">
+                and medical_order = #{medicalOrder}
+            </if>
+            <if test="money != null and money != ''">
+                and money = #{money}
+            </if>
+            <if test="registerId != null">
+                and register_id = #{registerId}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from medical_record
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="prescriptionNum != null and prescriptionNum != ''">
+                and prescription_num = #{prescriptionNum}
+            </if>
+            <if test="prescription != null and prescription != ''">
+                and prescription = #{prescription}
+            </if>
+            <if test="drugids != null and drugids != ''">
+                and drugIds = #{drugids}
+            </if>
+            <if test="conditionDescription != null and conditionDescription != ''">
+                and condition_description = #{conditionDescription}
+            </if>
+            <if test="diagnosisResult != null and diagnosisResult != ''">
+                and diagnosis_result = #{diagnosisResult}
+            </if>
+            <if test="medicalOrder != null and medicalOrder != ''">
+                and medical_order = #{medicalOrder}
+            </if>
+            <if test="money != null and money != ''">
+                and money = #{money}
+            </if>
+            <if test="registerId != null">
+                and register_id = #{registerId}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into medical_record(prescription_num, prescription, drugIds, condition_description, diagnosis_result,
+                                   medical_order, money, register_id, create_datetime)
+        values (#{prescriptionNum}, #{prescription}, #{drugids}, #{conditionDescription}, #{diagnosisResult},
+                #{medicalOrder}, #{money}, #{registerId}, #{createDatetime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into medical_record(prescription_num, prescription, drugIds, condition_description, diagnosis_result,
+        medical_order, money, register_id, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.prescriptionNum}, #{entity.prescription}, #{entity.drugids}, #{entity.conditionDescription},
+            #{entity.diagnosisResult}, #{entity.medicalOrder}, #{entity.money}, #{entity.registerId},
+            #{entity.createDatetime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into medical_record(prescription_num, prescription, drugIds, condition_description, diagnosis_result,
+        medical_order, money, register_id, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.prescriptionNum}, #{entity.prescription}, #{entity.drugids}, #{entity.conditionDescription},
+            #{entity.diagnosisResult}, #{entity.medicalOrder}, #{entity.money}, #{entity.registerId},
+            #{entity.createDatetime})
+        </foreach>
+        on duplicate key update
+        prescription_num = values(prescription_num),
+        prescription = values(prescription),
+        drugIds = values(drugIds),
+        condition_description = values(condition_description),
+        diagnosis_result = values(diagnosis_result),
+        medical_order = values(medical_order),
+        money = values(money),
+        register_id = values(register_id),
+        create_datetime = values(create_datetime)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update medical_record
+        <set>
+            <if test="prescriptionNum != null and prescriptionNum != ''">
+                prescription_num = #{prescriptionNum},
+            </if>
+            <if test="prescription != null and prescription != ''">
+                prescription = #{prescription},
+            </if>
+            <if test="drugids != null and drugids != ''">
+                drugIds = #{drugids},
+            </if>
+            <if test="conditionDescription != null and conditionDescription != ''">
+                condition_description = #{conditionDescription},
+            </if>
+            <if test="diagnosisResult != null and diagnosisResult != ''">
+                diagnosis_result = #{diagnosisResult},
+            </if>
+            <if test="medicalOrder != null and medicalOrder != ''">
+                medical_order = #{medicalOrder},
+            </if>
+            <if test="money != null and money != ''">
+                money = #{money},
+            </if>
+            <if test="registerId != null">
+                register_id = #{registerId},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from medical_record
+        where id = #{id}
+    </delete>
+
+</mapper>
+

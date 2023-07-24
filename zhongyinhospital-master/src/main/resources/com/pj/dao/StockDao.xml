@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.StockDao">
+
+    <resultMap type="com.pj.entity.Stock" id="StockMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="drugId" column="drug_id" jdbcType="INTEGER"/>
+        <result property="num" column="num" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="money" column="money" jdbcType="VARCHAR"/>
+        <result property="supplier" column="supplier" jdbcType="VARCHAR"/>
+        <result property="stockTime" column="stock_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="StockMap">
+        select id,
+               drug_id,
+               num,
+               price,
+               money,
+               supplier,
+               stock_time
+        from stock
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StockMap">
+        select
+        id, drug_id, num, price, money, supplier, stock_time
+        from stock
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="drugId != null">
+                and drug_id = #{drugId}
+            </if>
+            <if test="num != null">
+                and num = #{num}
+            </if>
+            <if test="price != null and price != ''">
+                and price = #{price}
+            </if>
+            <if test="money != null and money != ''">
+                and money = #{money}
+            </if>
+            <if test="supplier != null and supplier != ''">
+                and supplier = #{supplier}
+            </if>
+            <if test="stockTime != null">
+                and stock_time = #{stockTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from stock
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="drugId != null">
+                and drug_id = #{drugId}
+            </if>
+            <if test="num != null">
+                and num = #{num}
+            </if>
+            <if test="price != null and price != ''">
+                and price = #{price}
+            </if>
+            <if test="money != null and money != ''">
+                and money = #{money}
+            </if>
+            <if test="supplier != null and supplier != ''">
+                and supplier = #{supplier}
+            </if>
+            <if test="stockTime != null">
+                and stock_time = #{stockTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into stock(drug_id, num, price, money, supplier, stock_time)
+        values (#{drugId}, #{num}, #{price}, #{money}, #{supplier}, #{stockTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into stock(drug_id, num, price, money, supplier, stock_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.drugId}, #{entity.num}, #{entity.price}, #{entity.money}, #{entity.supplier}, #{entity.stockTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into stock(drug_id, num, price, money, supplier, stock_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.drugId}, #{entity.num}, #{entity.price}, #{entity.money}, #{entity.supplier}, #{entity.stockTime})
+        </foreach>
+        on duplicate key update
+        drug_id = values(drug_id),
+        num = values(num),
+        price = values(price),
+        money = values(money),
+        supplier = values(supplier),
+        stock_time = values(stock_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update stock
+        <set>
+            <if test="drugId != null">
+                drug_id = #{drugId},
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="price != null and price != ''">
+                price = #{price},
+            </if>
+            <if test="money != null and money != ''">
+                money = #{money},
+            </if>
+            <if test="supplier != null and supplier != ''">
+                supplier = #{supplier},
+            </if>
+            <if test="stockTime != null">
+                stock_time = #{stockTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from stock
+        where id = #{id}
+    </delete>
+
+</mapper>
+

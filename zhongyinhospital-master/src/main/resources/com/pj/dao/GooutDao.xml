@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.GooutDao">
+
+    <resultMap type="com.pj.entity.Goout" id="GooutMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="drugId" column="drug_id" jdbcType="INTEGER"/>
+        <result property="drugName" column="drug_name" jdbcType="VARCHAR"/>
+        <result property="drugNum" column="drug_num" jdbcType="INTEGER"/>
+        <result property="moner" column="moner" jdbcType="VARCHAR"/>
+        <result property="tolltakedrugNo" column="tolltakedrug_no" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="GooutMap">
+        select id,
+               drug_id,
+               drug_name,
+               drug_num,
+               moner,
+               tolltakedrug_no,
+               patient_id,
+               create_time
+        from goout
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="GooutMap">
+        select
+        id, drug_id, drug_name, drug_num, moner, tolltakedrug_no, patient_id, create_time
+        from goout
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="drugId != null">
+                and drug_id = #{drugId}
+            </if>
+            <if test="drugName != null and drugName != ''">
+                and drug_name = #{drugName}
+            </if>
+            <if test="drugNum != null">
+                and drug_num = #{drugNum}
+            </if>
+            <if test="moner != null and moner != ''">
+                and moner = #{moner}
+            </if>
+            <if test="tolltakedrugNo != null and tolltakedrugNo != ''">
+                and tolltakedrug_no = #{tolltakedrugNo}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from goout
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="drugId != null">
+                and drug_id = #{drugId}
+            </if>
+            <if test="drugName != null and drugName != ''">
+                and drug_name = #{drugName}
+            </if>
+            <if test="drugNum != null">
+                and drug_num = #{drugNum}
+            </if>
+            <if test="moner != null and moner != ''">
+                and moner = #{moner}
+            </if>
+            <if test="tolltakedrugNo != null and tolltakedrugNo != ''">
+                and tolltakedrug_no = #{tolltakedrugNo}
+            </if>
+            <if test="patientId != null and patientId != ''">
+                and patient_id = #{patientId}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into goout(drug_id, drug_name, drug_num, moner, tolltakedrug_no, patient_id, create_time)
+        values (#{drugId}, #{drugName}, #{drugNum}, #{moner}, #{tolltakedrugNo}, #{patientId}, #{createTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into goout(drug_id, drug_name, drug_num, moner, tolltakedrug_no, patient_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.drugId}, #{entity.drugName}, #{entity.drugNum}, #{entity.moner}, #{entity.tolltakedrugNo},
+            #{entity.patientId}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into goout(drug_id, drug_name, drug_num, moner, tolltakedrug_no, patient_id, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.drugId}, #{entity.drugName}, #{entity.drugNum}, #{entity.moner}, #{entity.tolltakedrugNo},
+            #{entity.patientId}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        drug_id = values(drug_id),
+        drug_name = values(drug_name),
+        drug_num = values(drug_num),
+        moner = values(moner),
+        tolltakedrug_no = values(tolltakedrug_no),
+        patient_id = values(patient_id),
+        create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update goout
+        <set>
+            <if test="drugId != null">
+                drug_id = #{drugId},
+            </if>
+            <if test="drugName != null and drugName != ''">
+                drug_name = #{drugName},
+            </if>
+            <if test="drugNum != null">
+                drug_num = #{drugNum},
+            </if>
+            <if test="moner != null and moner != ''">
+                moner = #{moner},
+            </if>
+            <if test="tolltakedrugNo != null and tolltakedrugNo != ''">
+                tolltakedrug_no = #{tolltakedrugNo},
+            </if>
+            <if test="patientId != null and patientId != ''">
+                patient_id = #{patientId},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from goout
+        where id = #{id}
+    </delete>
+
+</mapper>
+

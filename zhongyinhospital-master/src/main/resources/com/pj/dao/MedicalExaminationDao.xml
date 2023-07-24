@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.MedicalExaminationDao">
+
+    <resultMap type="com.pj.entity.MedicalExamination" id="MedicalExaminationMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="bloodPressure" column="blood_pressure" jdbcType="VARCHAR"/>
+        <result property="bodyTemperature" column="body_temperature" jdbcType="VARCHAR"/>
+        <result property="heartRate" column="heart_rate" jdbcType="VARCHAR"/>
+        <result property="pulse" column="pulse" jdbcType="VARCHAR"/>
+        <result property="registerId" column="register_id" jdbcType="INTEGER"/>
+        <result property="examinationCost" column="examination_cost" jdbcType="VARCHAR"/>
+        <result property="prescriptionNum" column="prescription_num" jdbcType="VARCHAR"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="MedicalExaminationMap">
+        select id,
+               blood_pressure,
+               body_temperature,
+               heart_rate,
+               pulse,
+               register_id,
+               examination_cost,
+               prescription_num,
+               create_datetime
+        from medical_examination
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="MedicalExaminationMap">
+        select
+        id, blood_pressure, body_temperature, heart_rate, pulse, register_id, examination_cost, prescription_num,
+        create_datetime
+        from medical_examination
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="bloodPressure != null and bloodPressure != ''">
+                and blood_pressure = #{bloodPressure}
+            </if>
+            <if test="bodyTemperature != null and bodyTemperature != ''">
+                and body_temperature = #{bodyTemperature}
+            </if>
+            <if test="heartRate != null and heartRate != ''">
+                and heart_rate = #{heartRate}
+            </if>
+            <if test="pulse != null and pulse != ''">
+                and pulse = #{pulse}
+            </if>
+            <if test="registerId != null">
+                and register_id = #{registerId}
+            </if>
+            <if test="examinationCost != null and examinationCost != ''">
+                and examination_cost = #{examinationCost}
+            </if>
+            <if test="prescriptionNum != null and prescriptionNum != ''">
+                and prescription_num = #{prescriptionNum}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from medical_examination
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="bloodPressure != null and bloodPressure != ''">
+                and blood_pressure = #{bloodPressure}
+            </if>
+            <if test="bodyTemperature != null and bodyTemperature != ''">
+                and body_temperature = #{bodyTemperature}
+            </if>
+            <if test="heartRate != null and heartRate != ''">
+                and heart_rate = #{heartRate}
+            </if>
+            <if test="pulse != null and pulse != ''">
+                and pulse = #{pulse}
+            </if>
+            <if test="registerId != null">
+                and register_id = #{registerId}
+            </if>
+            <if test="examinationCost != null and examinationCost != ''">
+                and examination_cost = #{examinationCost}
+            </if>
+            <if test="prescriptionNum != null and prescriptionNum != ''">
+                and prescription_num = #{prescriptionNum}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into medical_examination(blood_pressure, body_temperature, heart_rate, pulse, register_id,
+                                        examination_cost, prescription_num, create_datetime)
+        values (#{bloodPressure}, #{bodyTemperature}, #{heartRate}, #{pulse}, #{registerId}, #{examinationCost},
+                #{prescriptionNum}, #{createDatetime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into medical_examination(blood_pressure, body_temperature, heart_rate, pulse, register_id,
+        examination_cost, prescription_num, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.bloodPressure}, #{entity.bodyTemperature}, #{entity.heartRate}, #{entity.pulse},
+            #{entity.registerId}, #{entity.examinationCost}, #{entity.prescriptionNum}, #{entity.createDatetime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into medical_examination(blood_pressure, body_temperature, heart_rate, pulse, register_id,
+        examination_cost, prescription_num, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.bloodPressure}, #{entity.bodyTemperature}, #{entity.heartRate}, #{entity.pulse},
+            #{entity.registerId}, #{entity.examinationCost}, #{entity.prescriptionNum}, #{entity.createDatetime})
+        </foreach>
+        on duplicate key update
+        blood_pressure = values(blood_pressure),
+        body_temperature = values(body_temperature),
+        heart_rate = values(heart_rate),
+        pulse = values(pulse),
+        register_id = values(register_id),
+        examination_cost = values(examination_cost),
+        prescription_num = values(prescription_num),
+        create_datetime = values(create_datetime)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update medical_examination
+        <set>
+            <if test="bloodPressure != null and bloodPressure != ''">
+                blood_pressure = #{bloodPressure},
+            </if>
+            <if test="bodyTemperature != null and bodyTemperature != ''">
+                body_temperature = #{bodyTemperature},
+            </if>
+            <if test="heartRate != null and heartRate != ''">
+                heart_rate = #{heartRate},
+            </if>
+            <if test="pulse != null and pulse != ''">
+                pulse = #{pulse},
+            </if>
+            <if test="registerId != null">
+                register_id = #{registerId},
+            </if>
+            <if test="examinationCost != null and examinationCost != ''">
+                examination_cost = #{examinationCost},
+            </if>
+            <if test="prescriptionNum != null and prescriptionNum != ''">
+                prescription_num = #{prescriptionNum},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from medical_examination
+        where id = #{id}
+    </delete>
+
+</mapper>
+

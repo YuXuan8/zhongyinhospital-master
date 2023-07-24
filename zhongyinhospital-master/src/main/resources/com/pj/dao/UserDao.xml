@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.UserDao">
+
+    <resultMap type="com.pj.entity.User" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="plainPassword" column="plain_password" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+        <result property="departmentType" column="department_type" jdbcType="INTEGER"/>
+        <result property="allowNum" column="allow_num" jdbcType="INTEGER"/>
+        <result property="nowNum" column="now_num" jdbcType="INTEGER"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="workAddress" column="work_address" jdbcType="VARCHAR"/>
+        <result property="workDateTime" column="work_date_time" jdbcType="VARCHAR"/>
+        <result property="workStatus" column="work_status" jdbcType="VARCHAR"/>
+        <result property="birthday" column="birthday" jdbcType="VARCHAR"/>
+        <result property="politicalStatus" column="political_status" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+        <result property="treatmentPrice" column="treatment_price" jdbcType="VARCHAR"/>
+        <result property="emailStatus" column="email_status" jdbcType="INTEGER"/>
+        <result property="validateCode" column="validate_code" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+        <result property="locked" column="locked" jdbcType="INTEGER"/>
+        <result property="delFlag" column="del_flag" jdbcType="VARCHAR"/>
+        <result property="loginIp" column="login_ip" jdbcType="VARCHAR"/>
+        <result property="loginDate" column="login_date" jdbcType="TIMESTAMP"/>
+        <result property="pwdUpdateDate" column="pwd_update_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select id,
+               username,
+               phone,
+               email,
+               plain_password,
+               password,
+               salt,
+               sex,
+               department_id,
+               department_type,
+               allow_num,
+               now_num,
+               address,
+               work_address,
+               work_date_time,
+               work_status,
+               birthday,
+               political_status,
+               grade,
+               treatment_price,
+               email_status,
+               validate_code,
+               update_time,
+               create_datetime,
+               locked,
+               del_flag,
+               login_ip,
+               login_date,
+               pwd_update_date
+        from user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+        id, username, phone, email, plain_password, password, salt, sex, department_id, department_type, allow_num,
+        now_num, address, work_address, work_date_time, work_status, birthday, political_status, grade, treatment_price,
+        email_status, validate_code, update_time, create_datetime, locked, del_flag, login_ip, login_date,
+        pwd_update_date
+        from user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="plainPassword != null and plainPassword != ''">
+                and plain_password = #{plainPassword}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="salt != null and salt != ''">
+                and salt = #{salt}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="departmentId != null">
+                and department_id = #{departmentId}
+            </if>
+            <if test="departmentType != null">
+                and department_type = #{departmentType}
+            </if>
+            <if test="allowNum != null">
+                and allow_num = #{allowNum}
+            </if>
+            <if test="nowNum != null">
+                and now_num = #{nowNum}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="workAddress != null and workAddress != ''">
+                and work_address = #{workAddress}
+            </if>
+            <if test="workDateTime != null and workDateTime != ''">
+                and work_date_time = #{workDateTime}
+            </if>
+            <if test="workStatus != null and workStatus != ''">
+                and work_status = #{workStatus}
+            </if>
+            <if test="birthday != null and birthday != ''">
+                and birthday = #{birthday}
+            </if>
+            <if test="politicalStatus != null and politicalStatus != ''">
+                and political_status = #{politicalStatus}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="treatmentPrice != null and treatmentPrice != ''">
+                and treatment_price = #{treatmentPrice}
+            </if>
+            <if test="emailStatus != null">
+                and email_status = #{emailStatus}
+            </if>
+            <if test="validateCode != null and validateCode != ''">
+                and validate_code = #{validateCode}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+            <if test="locked != null">
+                and locked = #{locked}
+            </if>
+            <if test="delFlag != null and delFlag != ''">
+                and del_flag = #{delFlag}
+            </if>
+            <if test="loginIp != null and loginIp != ''">
+                and login_ip = #{loginIp}
+            </if>
+            <if test="loginDate != null">
+                and login_date = #{loginDate}
+            </if>
+            <if test="pwdUpdateDate != null">
+                and pwd_update_date = #{pwdUpdateDate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="plainPassword != null and plainPassword != ''">
+                and plain_password = #{plainPassword}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="salt != null and salt != ''">
+                and salt = #{salt}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="departmentId != null">
+                and department_id = #{departmentId}
+            </if>
+            <if test="departmentType != null">
+                and department_type = #{departmentType}
+            </if>
+            <if test="allowNum != null">
+                and allow_num = #{allowNum}
+            </if>
+            <if test="nowNum != null">
+                and now_num = #{nowNum}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="workAddress != null and workAddress != ''">
+                and work_address = #{workAddress}
+            </if>
+            <if test="workDateTime != null and workDateTime != ''">
+                and work_date_time = #{workDateTime}
+            </if>
+            <if test="workStatus != null and workStatus != ''">
+                and work_status = #{workStatus}
+            </if>
+            <if test="birthday != null and birthday != ''">
+                and birthday = #{birthday}
+            </if>
+            <if test="politicalStatus != null and politicalStatus != ''">
+                and political_status = #{politicalStatus}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="treatmentPrice != null and treatmentPrice != ''">
+                and treatment_price = #{treatmentPrice}
+            </if>
+            <if test="emailStatus != null">
+                and email_status = #{emailStatus}
+            </if>
+            <if test="validateCode != null and validateCode != ''">
+                and validate_code = #{validateCode}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+            <if test="locked != null">
+                and locked = #{locked}
+            </if>
+            <if test="delFlag != null and delFlag != ''">
+                and del_flag = #{delFlag}
+            </if>
+            <if test="loginIp != null and loginIp != ''">
+                and login_ip = #{loginIp}
+            </if>
+            <if test="loginDate != null">
+                and login_date = #{loginDate}
+            </if>
+            <if test="pwdUpdateDate != null">
+                and pwd_update_date = #{pwdUpdateDate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" >
+        insert into user(username, phone, email, plain_password, password, salt, sex, department_id, department_type,
+                         allow_num, now_num, address, work_address, work_date_time, work_status, birthday,
+                         political_status, grade, treatment_price, email_status, validate_code, update_time,
+                         create_datetime, locked, del_flag, login_ip, login_date, pwd_update_date)
+        values (#{username}, #{phone}, #{email}, #{plainPassword}, #{password}, #{salt}, #{sex}, #{departmentId},
+                #{departmentType}, #{allowNum}, #{nowNum}, #{address}, #{workAddress}, #{workDateTime}, #{workStatus},
+                #{birthday}, #{politicalStatus}, #{grade}, #{treatmentPrice}, #{emailStatus}, #{validateCode},
+                #{updateTime}, #{createDatetime}, #{locked}, #{delFlag}, #{loginIp}, #{loginDate}, #{pwdUpdateDate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user(username, phone, email, plain_password, password, salt, sex, department_id, department_type,
+        allow_num, now_num, address, work_address, work_date_time, work_status, birthday, political_status, grade,
+        treatment_price, email_status, validate_code, update_time, create_datetime, locked, del_flag, login_ip,
+        login_date, pwd_update_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.phone}, #{entity.email}, #{entity.plainPassword}, #{entity.password},
+            #{entity.salt}, #{entity.sex}, #{entity.departmentId}, #{entity.departmentType}, #{entity.allowNum},
+            #{entity.nowNum}, #{entity.address}, #{entity.workAddress}, #{entity.workDateTime}, #{entity.workStatus},
+            #{entity.birthday}, #{entity.politicalStatus}, #{entity.grade}, #{entity.treatmentPrice},
+            #{entity.emailStatus}, #{entity.validateCode}, #{entity.updateTime}, #{entity.createDatetime},
+            #{entity.locked}, #{entity.delFlag}, #{entity.loginIp}, #{entity.loginDate}, #{entity.pwdUpdateDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user(username, phone, email, plain_password, password, salt, sex, department_id, department_type,
+        allow_num, now_num, address, work_address, work_date_time, work_status, birthday, political_status, grade,
+        treatment_price, email_status, validate_code, update_time, create_datetime, locked, del_flag, login_ip,
+        login_date, pwd_update_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.phone}, #{entity.email}, #{entity.plainPassword}, #{entity.password},
+            #{entity.salt}, #{entity.sex}, #{entity.departmentId}, #{entity.departmentType}, #{entity.allowNum},
+            #{entity.nowNum}, #{entity.address}, #{entity.workAddress}, #{entity.workDateTime}, #{entity.workStatus},
+            #{entity.birthday}, #{entity.politicalStatus}, #{entity.grade}, #{entity.treatmentPrice},
+            #{entity.emailStatus}, #{entity.validateCode}, #{entity.updateTime}, #{entity.createDatetime},
+            #{entity.locked}, #{entity.delFlag}, #{entity.loginIp}, #{entity.loginDate}, #{entity.pwdUpdateDate})
+        </foreach>
+        on duplicate key update
+        username = values(username),
+        phone = values(phone),
+        email = values(email),
+        plain_password = values(plain_password),
+        password = values(password),
+        salt = values(salt),
+        sex = values(sex),
+        department_id = values(department_id),
+        department_type = values(department_type),
+        allow_num = values(allow_num),
+        now_num = values(now_num),
+        address = values(address),
+        work_address = values(work_address),
+        work_date_time = values(work_date_time),
+        work_status = values(work_status),
+        birthday = values(birthday),
+        political_status = values(political_status),
+        grade = values(grade),
+        treatment_price = values(treatment_price),
+        email_status = values(email_status),
+        validate_code = values(validate_code),
+        update_time = values(update_time),
+        create_datetime = values(create_datetime),
+        locked = values(locked),
+        del_flag = values(del_flag),
+        login_ip = values(login_ip),
+        login_date = values(login_date),
+        pwd_update_date = values(pwd_update_date)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="plainPassword != null and plainPassword != ''">
+                plain_password = #{plainPassword},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="salt != null and salt != ''">
+                salt = #{salt},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId},
+            </if>
+            <if test="departmentType != null">
+                department_type = #{departmentType},
+            </if>
+            <if test="allowNum != null">
+                allow_num = #{allowNum},
+            </if>
+            <if test="nowNum != null">
+                now_num = #{nowNum},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="workAddress != null and workAddress != ''">
+                work_address = #{workAddress},
+            </if>
+            <if test="workDateTime != null and workDateTime != ''">
+                work_date_time = #{workDateTime},
+            </if>
+            <if test="workStatus != null and workStatus != ''">
+                work_status = #{workStatus},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="politicalStatus != null and politicalStatus != ''">
+                political_status = #{politicalStatus},
+            </if>
+            <if test="grade != null and grade != ''">
+                grade = #{grade},
+            </if>
+            <if test="treatmentPrice != null and treatmentPrice != ''">
+                treatment_price = #{treatmentPrice},
+            </if>
+            <if test="emailStatus != null">
+                email_status = #{emailStatus},
+            </if>
+            <if test="validateCode != null and validateCode != ''">
+                validate_code = #{validateCode},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+            <if test="locked != null">
+                locked = #{locked},
+            </if>
+            <if test="delFlag != null and delFlag != ''">
+                del_flag = #{delFlag},
+            </if>
+            <if test="loginIp != null and loginIp != ''">
+                login_ip = #{loginIp},
+            </if>
+            <if test="loginDate != null">
+                login_date = #{loginDate},
+            </if>
+            <if test="pwdUpdateDate != null">
+                pwd_update_date = #{pwdUpdateDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from user
+        where id = #{id}
+    </delete>
+<!--    <select id="queryById" resultMap="BaseResultMap">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from user-->
+<!--        where-->
+<!--        id = #{id,jdbcType=NUMERIC}-->
+<!--    </select>-->
+
+</mapper>
+

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.AnnouncementDao">
+
+    <resultMap type="com.pj.entity.Announcement" id="AnnouncementMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="contents" column="contents" jdbcType="VARCHAR"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+        <result property="annStatus" column="ann_status" jdbcType="INTEGER"/>
+        <result property="annDate" column="ann_date" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AnnouncementMap">
+        select id,
+               title,
+               contents,
+               create_datetime,
+               ann_status,
+               ann_date
+        from announcement
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AnnouncementMap">
+        select
+        id, title, contents, create_datetime, ann_status, ann_date
+        from announcement
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="contents != null and contents != ''">
+                and contents = #{contents}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+            <if test="annStatus != null">
+                and ann_status = #{annStatus}
+            </if>
+            <if test="annDate != null and annDate != ''">
+                and ann_date = #{annDate}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from announcement
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="contents != null and contents != ''">
+                and contents = #{contents}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+            <if test="annStatus != null">
+                and ann_status = #{annStatus}
+            </if>
+            <if test="annDate != null and annDate != ''">
+                and ann_date = #{annDate}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into announcement(title, contents, create_datetime, ann_status, ann_date)
+        values (#{title}, #{contents}, #{createDatetime}, #{annStatus}, #{annDate})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into announcement(title, contents, create_datetime, ann_status, ann_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.title}, #{entity.contents}, #{entity.createDatetime}, #{entity.annStatus}, #{entity.annDate})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into announcement(title, contents, create_datetime, ann_status, ann_date)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.title}, #{entity.contents}, #{entity.createDatetime}, #{entity.annStatus}, #{entity.annDate})
+        </foreach>
+        on duplicate key update
+        title = values(title),
+        contents = values(contents),
+        create_datetime = values(create_datetime),
+        ann_status = values(ann_status),
+        ann_date = values(ann_date)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update announcement
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="contents != null and contents != ''">
+                contents = #{contents},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+            <if test="annStatus != null">
+                ann_status = #{annStatus},
+            </if>
+            <if test="annDate != null and annDate != ''">
+                ann_date = #{annDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from announcement
+        where id = #{id}
+    </delete>
+
+</mapper>
+

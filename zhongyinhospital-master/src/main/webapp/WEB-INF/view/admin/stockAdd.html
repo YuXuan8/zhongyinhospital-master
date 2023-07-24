@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>药品入库</title>
+</head>
+<link rel="stylesheet" href="/layui/css/layui.css"/>
+<body>
+<form class="layui-form" id="user-add" action="" lay-filter="add">
+    <input type="hidden" name="drugId" id="drugId">
+    <div class="layui-form-item">
+        <label class="layui-form-label">药品信息：</label>
+        <div class="layui-input-block" id="drug">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">现有库存：</label>
+        <div class="layui-input-inline layui-col-md4">
+            <input type="text" id="drugnum" disabled="disabled" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">销售价格：</label>
+        <div class="layui-input-inline layui-col-md4">
+            <input type="text" id="drugprice" disabled="disabled" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">进货商：</label>
+        <div class="layui-input-inline">
+            <select name="supplier" id="manufacturer" lay-search="">
+                <option value="0" obj="{xxx,xx,xxx,xxx,xxx}">直接选择或搜索选择</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">数量：</label>
+        <div class="layui-input-inline layui-col-md4">
+            <input type="text" name="num" id="num" required lay-verify="required" placeholder="数量" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">单价：</label>
+        <div class="layui-input-inline layui-col-md4">
+            <input type="text" name="price" id="price" required lay-verify="required" placeholder="单价"
+                   autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">费用：</label>
+        <div class="layui-input-inline">
+            <input type="tel" name="money" id="money" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+</body>
+<script src="/js/jquery-3.3.1.min.js" charset="utf-8"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    //Demo
+    layui.use(['form', 'laydate', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+
+        let param = parent.param;
+        console.log(param);
+        $("#drug").text(param.name + "—" + param.drugType + "—" + param.specification + "—" + param.unit);
+        $("#drugnum").val(param.drugCount);
+        $("#drugprice").val(param.price);
+        $("#drugId").val(param.id);
+        $("#price").val(param.price);
+        //药物类型
+        $.post("/drugstore/getAllDrugType?drug=manufacturer", function (data) {
+            $.each(data, function (index, item) {
+                $('#manufacturer').append(new Option(item, item));// 下拉菜单里添加元素
+            });
+            layui.form.render("select");//重新渲染 固定写法
+        }, "json");
+        $("#price,#num").blur(function(){
+            let price = $("#price").val();
+            let num = $("#num").val();
+            $("#money").val(num*price);
+        });
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            var data1 = form.val("add");
+            if (data1.supplier==0) {
+                layer.alert("请选择厂家！");
+            }else{
+                $.ajax({
+                    url: '/drugstore/stock',
+                    type: "post",
+                    dataType: "json",
+                    data: data1,
+                    success: function (da) {
+                        if (da.status == 1) {
+                            layer.alert("添加成功！", function () {
+                                parent.layer.closeAll();
+                            });
+                        } else {
+                            layer.msg("添加失败！");
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+
+    });
+</script>
+</html>

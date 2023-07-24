@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/layui/2.6.8/layui.min.js"></script>
+    <script src="notify.js"></script>
+    <style>
+    body {
+        text-align: center;
+    }
+
+    .msgBox {
+        box-shadow: 0PX 10PX 30px 5PX rgba(0, 0, 0, 0.1);
+        background: #fff;
+        width: 1000px;
+        height: 500px;
+        margin: auto;
+        padding: 50px;
+    }
+    </style>
+<style>
+[class|=notify], [class|=notify]::after, [class|=notify]::before {
+    box-sizing: border-box;
+    outline: 0
+}
+
+.notify-msg-progress {
+    width: 13px;
+    height: 13px
+}
+
+.notify-msg__circle {
+    stroke-width: 2;
+    stroke-linecap: square;
+    fill: none;
+    transform: rotate(-90deg);
+    transform-origin: center
+}
+
+.notify-msg-stage:hover .notify-msg__circle {
+    -webkit-animation-play-state: paused !important;
+    animation-play-state: paused !important
+}
+
+.notify-msg__background {
+    stroke-width: 2;
+    fill: none
+}
+
+.notify-msg-stage {
+    position: fixed;
+    width: auto;
+    z-index: 99891015
+}
+
+.topLeft {
+    top: 20px;
+    left: 20px
+}
+
+.topCenter {
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, 0)
+}
+
+.topRight {
+    top: 20px;
+    right: 20px
+}
+
+.bottomLeft {
+    bottom: 20px;
+    left: 20px
+}
+
+.bottomCenter {
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 0)
+}
+
+.bottomRight {
+    bottom: 20px;
+    right: 20px
+}
+
+.vcenter {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.notify-msg-wrapper {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+    transform: translate3d(-50%, 0, 0);
+    transition: height .3s ease, padding .3s ease;
+    padding: 6px 0;
+    will-change: transform, opacity
+}
+
+.notify-msg {
+    padding: 15px 21px;
+    border-radius: 3px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+    transform: translate3d(-50%, 0, 0);
+    display: flex;
+    align-items: center
+}
+
+.notify-msg-content, .notify-msg-icon, .notify-msg-wait {
+    display: inline-block
+}
+
+.notify-msg-icon {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.notify-msg-icon svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 11px;
+    height: 11px
+}
+
+.notify-msg-wait {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    fill: #4eb127
+}
+
+.notify-msg-wait svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.notify-msg-close {
+    width: 14px;
+    height: 14px
+}
+
+.notify-msg-content {
+    margin: 0 10px;
+    min-width: 240px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: -apple-system, Microsoft Yahei, sans-serif;
+    text-shadow: 0 0 1px rgba(0, 0, 0, .01)
+}
+
+.notify-msg.notify-msg-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    box-shadow: 0 0 2px 0 rgba(0, 1, 1, .01), 0 0 0 1px #bee5eb
+}
+
+.notify-msg.notify-msg-info .notify-msg-icon {
+    background-color: #1d96aa
+}
+
+.notify-msg.notify-msg-success {
+    color: #155724;
+    background-color: #d4edda;
+    box-shadow: 0 0 2px 0 rgba(0, 1, 0, .01), 0 0 0 1px #c3e6cb
+}
+
+.notify-msg.notify-msg-success .notify-msg-icon {
+    background-color: #4ebb23
+}
+
+.notify-msg.notify-msg-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    box-shadow: 0 0 2px 0 rgba(1, 1, 0, .01), 0 0 0 1px #ffeeba
+}
+
+.notify-msg.notify-msg-warning .notify-msg-icon {
+    background-color: #f1b306
+}
+
+.notify-msg.notify-msg-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    box-shadow: 0 0 2px 0 rgba(1, 0, 0, .01), 0 0 0 1px #f5c6cb
+}
+
+.notify-msg.notify-msg-error .notify-msg-icon {
+    background-color: #f34b51
+}
+
+.notify-msg.notify-msg-loading {
+    color: #0fafad;
+    background-color: #e7fdfc;
+    box-shadow: 0 0 2px 0 rgba(0, 1, 1, .01), 0 0 0 1px #c2faf9
+}
+
+.notify-msg_loading {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    position: relative
+}
+
+.notify-msg-circular {
+    -webkit-animation: notify-msg-rotate 2s linear infinite both;
+    animation: notify-msg-rotate 2s linear infinite both;
+    transform-origin: center center;
+    height: 18px !important;
+    width: 18px !important
+}
+
+.notify-msg-path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    stroke: #0fafad;
+    -webkit-animation: notify-msg-dash 1.5s ease-in-out infinite;
+    animation: notify-msg-dash 1.5s ease-in-out infinite;
+    stroke-linecap: round
+}
+
+@-webkit-keyframes notify-msg-rotate {
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg)
+    }
+
+}
+
+@keyframes notify-msg-rotate {
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg)
+    }
+
+}
+
+@-webkit-keyframes notify-msg-dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0
+    }
+
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px
+    }
+
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px
+    }
+
+}
+
+@keyframes notify-msg-dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0
+    }
+
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px
+    }
+
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px
+    }
+
+}
+
+.notify-msg.notify-msg-info .notify-msg-wait {
+    fill: #0fafad
+}
+
+.notify-msg.notify-msg-success .notify-msg-wait {
+    fill: #4ebb23
+}
+
+.notify-msg.notify-msg-warning .notify-msg-wait {
+    fill: #f1b306
+}
+
+.notify-msg.notify-msg-error .notify-msg-wait {
+    fill: #f34b51
+}
+
+.notify-msg.notify-msg-loading .notify-msg-wait {
+    fill: #0fafad
+}
+
+.notify-msg.notify-msg-alert .notify-msg-wait {
+    fill: #999
+}
+
+.notify-msg.notify-msg-alert .notify-msg-content, .notify-msg.notify-msg-confirm .notify-msg-content {
+    font-size: 18px
+}
+
+.notify-msg.notify-msg-alert .notify-msg-wait {
+    display: block;
+    width: 100px;
+    height: auto;
+    margin: auto;
+    margin-top: 30px
+}
+
+.notify-msg.notify-msg-confirm .notify-msg-wait {
+    display: inline-block;
+    width: 100px;
+    height: auto;
+    margin: auto
+}
+
+.notify-msg.notify-msg-confirm .notify-msg-content {
+    display: block;
+    margin-bottom: 30px
+}
+
+.notify-msg.notify-msg-alert .notify-msg-wait .btnOk, .notify-msg.notify-msg-confirm .notify-msg-wait .btnOk {
+    line-height: 30px;
+    border-radius: 4px;
+    background-color: #0069d9;
+    border: 1px solid #0062cc;
+    color: #fff;
+    width: 100px;
+    cursor: pointer
+}
+
+.notify-msg.notify-msg-confirm .btnCancel {
+    line-height: 30px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #666;
+    width: 100px;
+    cursor: pointer;
+    margin-left: 6px
+}
+
+.notify-msg-pointer {
+    cursor: pointer
+}
+
+@-webkit-keyframes notify-msg_info {
+    0% {
+        stroke: #0fafad
+    }
+
+    to {
+        stroke: #0fafad;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@keyframes notify-msg_info {
+    0% {
+        stroke: #0fafad
+    }
+
+    to {
+        stroke: #0fafad;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@-webkit-keyframes notify-msg_success {
+    0% {
+        stroke: #4eb127
+    }
+
+    to {
+        stroke: #4eb127;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@keyframes notify-msg_success {
+    0% {
+        stroke: #4eb127
+    }
+
+    to {
+        stroke: #4eb127;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@-webkit-keyframes notify-msg_warning {
+    0% {
+        stroke: #fcbc0b
+    }
+
+    to {
+        stroke: #fcbc0b;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@keyframes notify-msg_warning {
+    0% {
+        stroke: #fcbc0b
+    }
+
+    to {
+        stroke: #fcbc0b;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@-webkit-keyframes notify-msg_error {
+    0% {
+        stroke: #eb262d
+    }
+
+    to {
+        stroke: #eb262d;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+@keyframes notify-msg_error {
+    0% {
+        stroke: #eb262d
+    }
+
+    to {
+        stroke: #eb262d;
+        stroke-dasharray: 0 100
+    }
+
+}
+
+.notify-msg-fade-in {
+    -webkit-animation: notify-msg-fade .2s ease-out both;
+    animation: notify-msg-fade .2s ease-out both
+}
+
+.notify-msg-fade-out {
+    animation: notify-msg-fade .3s linear reverse both
+}
+
+@-webkit-keyframes notify-msg-fade {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, -80%, 0)
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, 0, 0)
+    }
+
+}
+
+@keyframes notify-msg-fade {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, -80%, 0)
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, 0, 0)
+    }
+
+}
+
+.notify-msg-fade-in-b {
+    -webkit-animation: notify-msg-fade-b .2s ease-out both;
+    animation: notify-msg-fade-b .2s ease-out both
+}
+
+.notify-msg-fade-out-b {
+    animation: notify-msg-fade-b .3s linear reverse both
+}
+
+@-webkit-keyframes notify-msg-fade-b {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, 80%, 0)
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, 0, 0)
+    }
+
+}
+
+@keyframes notify-msg-fade-b {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, 80%, 0)
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        transform: translate3d(-50%, 0%, 0)
+    }
+
+}
+
+.notify-msg.notify-msg-alert, .notify-msg.notify-msg-confirm {
+    display: block;
+    box-shadow: 0 0 6px 2px rgba(0, 0, 0, .1);
+    background-color: #fff;
+    border: 1px solid #ccc
+}
+
+.bounceIn, .bounceOut {
+    -webkit-animation-duration: .45s;
+    -moz-animation-duration: .45s;
+    -o-animation-duration: .45s;
+    animation-duration: .45s
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        filter: alpha(opacity=0)
+    }
+
+    100% {
+        opacity: 1;
+        filter: alpha(opacity=100)
+    }
+
+}
+
+.bounceIn {
+    -webkit-animation-name: bounceIn;
+    -moz-animation-name: bounceIn;
+    -o-animation-name: bounceIn;
+    animation-name: bounceIn
+}
+
+@keyframes bounceOut {
+    0% {
+        opacity: 1;
+        filter: alpha(opacity=100)
+    }
+
+    100% {
+        opacity: 0;
+        filter: alpha(opacity=0)
+    }
+
+}
+
+.bounceOut {
+    -webkit-animation-name: bounceOut;
+    -moz-animation-name: bounceOut;
+    -o-animation-name: bounceOut;
+    animation-name: bounceOut
+}
+
+.notify-none {
+    display: none
+}
+
+.notify-modal {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+    position: fixed;
+    transition: height .3s ease, padding .3s ease
+}
+</style>
+</head>
+
+<body>
+    <h1>演示</h1>
+    <div class="msgBox" id="msgBox">
+        <button id="info">提示</button>
+        <button id="warning">警告</button>
+        <button id="success">成功</button>
+        <button id="error">错误</button>
+        <button id="loading">加载</button>
+        <button id="noclose">不显示关闭按钮</button>
+        <button id="close">关闭时回调</button>
+        <button id="destroyAll">关闭全部</button>
+        <button id="topLeft">左上</button>
+        <button id="topRight">右上</button>
+        <button id="bottomLeft">左下</button>
+        <button id="bottomCenter">中下</button>
+        <button id="bottomRight">右下</button>
+        <button id="vcenter">正中间</button>
+        <p>
+            <button id="pos">指定ID/CLASS为弹出位置</button>
+            <button id="alert">警告框</button>
+            <button id="confirm">确认框</button>
+            <pre style="text-align: left;line-height: 26px;width:900px;margin: auto;padding-top:20px;">
+        1、notify.info("提示消息");
+        2、notify.warning("警告消息");
+        3、notify.success("成功消息");
+        4、notify.loading("加载中");
+        5、notify.error("失败消息");
+        6、notify.info("不显示关闭按钮", false);
+        7、notify.warning("提示消息", function () {
+            alert("回调成功");
+        });
+        8、notify.destroyAll(); //全部关闭
+        9、notify.success("指定位置显示","#msgBox", "topLeft"); //参数：topLeft、topCenter、topRight、bottomLeft、bottomCenter、bottomRight、vcenter
+        10、notify.alert("模态框", "vcenter","shadow"); //参数：shadow 显示遮罩
+        11、notify.confirm("确认框", "vcenter","shadow"，function(){
+                alert("回调方法")
+            }); //参数：shadow 显示遮罩 、function 确定后回调方法
+            </pre>
+        </p>
+    </div>
+    <script>
+    layui.use(['notify'], function() {
+        var notify = layui.notify;
+        var j = 1;
+        document.getElementById("info").onclick = function() {
+            notify.info("提示消息 " + j++);
+        };
+
+        document.getElementById("warning").onclick = function() {
+            notify.warning("警告消息 " + j++);
+        }
+        document.getElementById("success").onclick = function() {
+            notify.success("操作成功 " + j++);
+        }
+        document.getElementById("loading").onclick = function() {
+            notify.loading("加载中,不会自动关闭 " + j++);
+        }
+        document.getElementById("error").onclick = function() {
+            notify.error("操作失败 " + j++);
+        }
+        document.getElementById("noclose").onclick = function() {
+            notify.error("不显示关闭按钮 " + j++, false);
+        }
+        document.getElementById("close").onclick = function() {
+            notify.info("提示消息 " + j++, function() {
+                alert("回调成功");
+            });
+        };
+        document.getElementById("destroyAll").onclick = function() {
+            notify.destroyAll();
+            j = 1
+        }
+        document.getElementById("topLeft").onclick = function() {
+            notify.info("左上 " + j++, "topLeft");
+        }
+        document.getElementById("topRight").onclick = function() {
+            notify.info("右上 " + j++, "topRight");
+        }
+        document.getElementById("bottomLeft").onclick = function() {
+            notify.info("左下 " + j++, "bottomLeft");
+        }
+        document.getElementById("bottomRight").onclick = function() {
+            notify.info("右下 " + j++, "bottomRight");
+        }
+        document.getElementById("bottomCenter").onclick = function() {
+            notify.info("中下 " + j++, "bottomCenter");
+        }
+        document.getElementById("vcenter").onclick = function() {
+            notify.info("正中 " + j++, "vcenter");
+        }
+        document.getElementById("pos").onclick = function() {
+            notify.info("指定位置提示消息 " + j++, "#msgBox");
+        }
+        document.getElementById("alert").onclick = function() {
+            notify.alert("请输入内容" + j++, "vcenter", "shadow");
+        }
+        document.getElementById("confirm").onclick = function() {
+            notify.confirm("确定要删除么" + j++, "vcenter", "shadow", function() {
+                alert("回调方法")
+            });
+        }
+    })
+    </script>
+</body>
+
+</html>

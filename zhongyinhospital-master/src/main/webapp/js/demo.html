@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>不依赖layui的版本演示</title>
+    <script src="notify_stand.js"></script>
+    <style>
+    body {
+        text-align: center;
+        background: #fafcf1;
+    }
+
+    .msgBox {
+        box-shadow: 0PX 10PX 30px 5PX rgba(0, 0, 0, 0.1);
+        background: #fff;
+        width: 1000px;
+        height: 500px;
+        margin: auto;
+        padding: 50px;
+    }
+    </style>
+</head>
+
+<body>
+    <h1>演示</h1>
+    <div class="msgBox" id="msgBox">
+        <button id="info">提示</button>
+        <button id="warning">警告</button>
+        <button id="success">成功</button>
+        <button id="error">错误</button>
+        <button id="loading">加载</button>
+        <button id="noclose">不显示关闭按钮</button>
+        <button id="close">关闭时回调</button>
+        <button id="destroyAll">关闭全部</button>
+        <button id="topLeft">左上</button>
+        <button id="topRight">右上</button>
+        <button id="bottomLeft">左下</button>
+        <button id="bottomCenter">中下</button>
+        <button id="bottomRight">右下</button>
+        <button id="vcenter">正中间</button>
+        <p>
+            <button id="pos">指定ID/CLASS为弹出位置</button>
+            <button id="alert">警告框</button>
+            <button id="confirm">确认框</button>
+            <pre style="text-align: left;line-height: 26px;width:900px;margin: auto;padding-top:20px;">
+        1、notify.info("提示消息");
+        2、notify.warning("警告消息");
+        3、notify.success("成功消息");
+        4、notify.loading("加载中");
+        5、notify.error("失败消息");
+        6、notify.info("不显示关闭按钮", false);
+        7、notify.warning("提示消息", function () {
+            alert("回调成功");
+        });
+        8、notify.destroyAll(); //全部关闭
+        9、notify.success("指定位置显示","#msgBox","topLeft"); //参数：topLeft、topCenter、topRight、bottomLeft、bottomCenter、bottomRight、vcenter
+        10、notify.alert("模态框", "vcenter","shadow"); //参数：shadow 显示遮罩
+        11、notify.confirm("确认框", "vcenter","shadow"，function(){
+                alert("回调方法")
+            }); //参数：shadow 显示遮罩 、function 确定后回调方法
+            </pre>
+        </p>
+    </div>
+    <script>
+    var j = 1;
+    document.getElementById("info").onclick = function() {
+        notify.info("提示消息 " + j++);
+    };
+
+    document.getElementById("warning").onclick = function() {
+        notify.warning("警告消息 " + j++);
+    }
+    document.getElementById("success").onclick = function() {
+        notify.success("操作成功 " + j++);
+    }
+    document.getElementById("loading").onclick = function() {
+        notify.loading("加载中,不会自动关闭 " + j++);
+    }
+    document.getElementById("error").onclick = function() {
+        notify.error("操作失败 " + j++);
+    }
+    document.getElementById("noclose").onclick = function() {
+        notify.error("不显示关闭按钮 " + j++, false);
+    }
+    document.getElementById("close").onclick = function() {
+        notify.info("提示消息 " + j++, function() {
+            alert("回调成功");
+        });
+    };
+    document.getElementById("destroyAll").onclick = function() {
+        notify.destroyAll();
+        j = 1
+    }
+    document.getElementById("topLeft").onclick = function() {
+        notify.info("左上 " + j++, "topLeft");
+    }
+    document.getElementById("topRight").onclick = function() {
+        notify.info("右上 " + j++, "topRight");
+    }
+    document.getElementById("bottomLeft").onclick = function() {
+        notify.info("左下 " + j++, "bottomLeft");
+    }
+    document.getElementById("bottomRight").onclick = function() {
+        notify.info("右下 " + j++, "bottomRight");
+    }
+    document.getElementById("bottomCenter").onclick = function() {
+        notify.info("中下 " + j++, "bottomCenter");
+    }
+    document.getElementById("vcenter").onclick = function() {
+        notify.info("正中 " + j++, "vcenter");
+    }
+    document.getElementById("pos").onclick = function() {
+        notify.info("指定位置提示消息 " + j++, "#msgBox", "bottomCenter");
+    }
+    document.getElementById("alert").onclick = function() {
+        notify.alert("请输入内容" + j++, "vcenter", "shadow");
+    }
+    document.getElementById("confirm").onclick = function() {
+        notify.confirm("确定要删除么" + j++, "vcenter", "shadow", function() {
+            alert("回调方法")
+        });
+    }
+    </script>
+</body>
+
+</html>

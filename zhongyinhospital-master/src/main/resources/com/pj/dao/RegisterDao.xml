@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.RegisterDao">
+
+    <resultMap type="com.pj.entity.Register" id="RegisterMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="registerednum" column="registeredNum" jdbcType="VARCHAR"/>
+        <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+        <result property="doctorId" column="doctor_id" jdbcType="INTEGER"/>
+        <result property="doctor" column="doctor" jdbcType="VARCHAR"/>
+        <result property="payType" column="pay_type" jdbcType="VARCHAR"/>
+        <result property="registerType" column="register_type" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="registerPriice" column="register_priice" jdbcType="VARCHAR"/>
+        <result property="payPrice" column="pay_price" jdbcType="VARCHAR"/>
+        <result property="changePrice" column="change_price" jdbcType="VARCHAR"/>
+        <result property="patientId" column="patient_id" jdbcType="INTEGER"/>
+        <result property="createId" column="create_id" jdbcType="INTEGER"/>
+        <result property="registerStatus" column="register_status" jdbcType="INTEGER"/>
+        <result property="treatmentStatus" column="treatment_status" jdbcType="INTEGER"/>
+        <result property="createName" column="create_name" jdbcType="VARCHAR"/>
+        <result property="chargeStatus" column="charge_status" jdbcType="INTEGER"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+        <result property="departmentName" column="department_name" jdbcType="VARCHAR"/>
+        <result property="prescriptionNum" column="prescription_num" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="selectBymenzhen" parameterType="Register" resultMap="RegisterMap" >
+        SELECT r.id, r.create_datetime, r.doctor, dp.name, mr.prescription_num as prescription_num, r.register_type,
+        r.charge_status
+        FROM register r
+        JOIN department dp ON dp.id = r.department_id
+        JOIN medical_record mr ON mr.create_datetime = r.create_datetime
+        <where>
+            <if test="patient_id != null">
+                AND r.patient_id = #{patient_id}
+            </if>
+            <if test="charge_status != null">
+                AND r.charge_status = #{charge_status}
+            </if>
+            AND r.treatment_status = 1
+        </where>
+
+    </select>
+
+    <select id="findAll" parameterType="Register" resultMap="RegisterMap">
+        SELECT r.*, p.name, d.name as department_name
+        FROM `register` r
+        inner join patient p on p.card_id = r.patient_id
+        inner join department d on d.id = r.department_id
+        <where>
+            <if test="departmentId != null and departmentId != ''">
+                AND r.department_id = #{departmentId}
+            </if>
+            <if test="registerType != null and registerType != ''">
+                AND r.register_type = #{registerType}
+            </if>
+            <if test="registerStatus != null">
+                AND r.register_status = #{registerStatus}
+            </if>
+            <if test="treatmentStatus != null">
+                AND r.treatment_status = #{treatmentStatus}
+            </if>
+        </where>
+        ORDER BY create_datetime DESC
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RegisterMap">
+        select
+          id, registeredNum, department_id, doctor_id, doctor, pay_type, register_type, price, register_priice, pay_price, change_price, patient_id, create_id, register_status, treatment_status, create_name, charge_status, create_datetime
+        from register
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="RegisterMap">
+        select
+          id, registeredNum, department_id, doctor_id, doctor, pay_type, register_type, price, register_priice, pay_price, change_price, patient_id, create_id, register_status, treatment_status, create_name, charge_status, create_datetime
+        from register
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="registerednum != null and registerednum != ''">
+                and registeredNum = #{registerednum}
+            </if>
+            <if test="departmentId != null">
+                and department_id = #{departmentId}
+            </if>
+            <if test="doctorId != null">
+                and doctor_id = #{doctorId}
+            </if>
+            <if test="doctor != null and doctor != ''">
+                and doctor = #{doctor}
+            </if>
+            <if test="payType != null and payType != ''">
+                and pay_type = #{payType}
+            </if>
+            <if test="registerType != null and registerType != ''">
+                and register_type = #{registerType}
+            </if>
+            <if test="price != null and price != ''">
+                and price = #{price}
+            </if>
+            <if test="registerPriice != null and registerPriice != ''">
+                and register_priice = #{registerPriice}
+            </if>
+            <if test="payPrice != null and payPrice != ''">
+                and pay_price = #{payPrice}
+            </if>
+            <if test="changePrice != null and changePrice != ''">
+                and change_price = #{changePrice}
+            </if>
+            <if test="patientId != null">
+                and patient_id = #{patientId}
+            </if>
+            <if test="createId != null">
+                and create_id = #{createId}
+            </if>
+            <if test="registerStatus != null">
+                and register_status = #{registerStatus}
+            </if>
+            <if test="treatmentStatus != null">
+                and treatment_status = #{treatmentStatus}
+            </if>
+            <if test="createName != null and createName != ''">
+                and create_name = #{createName}
+            </if>
+            <if test="chargeStatus != null">
+                and charge_status = #{chargeStatus}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from register
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="registerednum != null and registerednum != ''">
+                and registeredNum = #{registerednum}
+            </if>
+            <if test="departmentId != null">
+                and department_id = #{departmentId}
+            </if>
+            <if test="doctorId != null">
+                and doctor_id = #{doctorId}
+            </if>
+            <if test="doctor != null and doctor != ''">
+                and doctor = #{doctor}
+            </if>
+            <if test="payType != null and payType != ''">
+                and pay_type = #{payType}
+            </if>
+            <if test="registerType != null and registerType != ''">
+                and register_type = #{registerType}
+            </if>
+            <if test="price != null and price != ''">
+                and price = #{price}
+            </if>
+            <if test="registerPriice != null and registerPriice != ''">
+                and register_priice = #{registerPriice}
+            </if>
+            <if test="payPrice != null and payPrice != ''">
+                and pay_price = #{payPrice}
+            </if>
+            <if test="changePrice != null and changePrice != ''">
+                and change_price = #{changePrice}
+            </if>
+            <if test="patientId != null">
+                and patient_id = #{patientId}
+            </if>
+            <if test="createId != null">
+                and create_id = #{createId}
+            </if>
+            <if test="registerStatus != null">
+                and register_status = #{registerStatus}
+            </if>
+            <if test="treatmentStatus != null">
+                and treatment_status = #{treatmentStatus}
+            </if>
+            <if test="createName != null and createName != ''">
+                and create_name = #{createName}
+            </if>
+            <if test="chargeStatus != null">
+                and charge_status = #{chargeStatus}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into register(registeredNum, department_id, doctor_id, doctor, pay_type, register_type, price, register_priice, pay_price, change_price, patient_id, create_id, register_status, treatment_status, create_name, charge_status, create_datetime)
+        values (#{registerednum}, #{departmentId}, #{doctorId}, #{doctor}, #{payType}, #{registerType}, #{price}, #{registerPriice}, #{payPrice}, #{changePrice}, #{patientId}, #{createId}, #{registerStatus}, #{treatmentStatus}, #{createName}, #{chargeStatus}, #{createDatetime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into register(registeredNum, department_id, doctor_id, doctor, pay_type, register_type, price, register_priice, pay_price, change_price, patient_id, create_id, register_status, treatment_status, create_name, charge_status, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.registerednum}, #{entity.departmentId}, #{entity.doctorId}, #{entity.doctor}, #{entity.payType}, #{entity.registerType}, #{entity.price}, #{entity.registerPriice}, #{entity.payPrice}, #{entity.changePrice}, #{entity.patientId}, #{entity.createId}, #{entity.registerStatus}, #{entity.treatmentStatus}, #{entity.createName}, #{entity.chargeStatus}, #{entity.createDatetime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into register(registeredNum, department_id, doctor_id, doctor, pay_type, register_type, price, register_priice, pay_price, change_price, patient_id, create_id, register_status, treatment_status, create_name, charge_status, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.registerednum}, #{entity.departmentId}, #{entity.doctorId}, #{entity.doctor}, #{entity.payType}, #{entity.registerType}, #{entity.price}, #{entity.registerPriice}, #{entity.payPrice}, #{entity.changePrice}, #{entity.patientId}, #{entity.createId}, #{entity.registerStatus}, #{entity.treatmentStatus}, #{entity.createName}, #{entity.chargeStatus}, #{entity.createDatetime})
+        </foreach>
+        on duplicate key update
+        registeredNum = values(registeredNum),
+        department_id = values(department_id),
+        doctor_id = values(doctor_id),
+        doctor = values(doctor),
+        pay_type = values(pay_type),
+        register_type = values(register_type),
+        price = values(price),
+        register_priice = values(register_priice),
+        pay_price = values(pay_price),
+        change_price = values(change_price),
+        patient_id = values(patient_id),
+        create_id = values(create_id),
+        register_status = values(register_status),
+        treatment_status = values(treatment_status),
+        create_name = values(create_name),
+        charge_status = values(charge_status),
+        create_datetime = values(create_datetime)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update register
+        <set>
+            <if test="registerednum != null and registerednum != ''">
+                registeredNum = #{registerednum},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId},
+            </if>
+            <if test="doctorId != null">
+                doctor_id = #{doctorId},
+            </if>
+            <if test="doctor != null and doctor != ''">
+                doctor = #{doctor},
+            </if>
+            <if test="payType != null and payType != ''">
+                pay_type = #{payType},
+            </if>
+            <if test="registerType != null and registerType != ''">
+                register_type = #{registerType},
+            </if>
+            <if test="price != null and price != ''">
+                price = #{price},
+            </if>
+            <if test="registerPriice != null and registerPriice != ''">
+                register_priice = #{registerPriice},
+            </if>
+            <if test="payPrice != null and payPrice != ''">
+                pay_price = #{payPrice},
+            </if>
+            <if test="changePrice != null and changePrice != ''">
+                change_price = #{changePrice},
+            </if>
+            <if test="patientId != null">
+                patient_id = #{patientId},
+            </if>
+            <if test="createId != null">
+                create_id = #{createId},
+            </if>
+            <if test="registerStatus != null">
+                register_status = #{registerStatus},
+            </if>
+            <if test="treatmentStatus != null">
+                treatment_status = #{treatmentStatus},
+            </if>
+            <if test="createName != null and createName != ''">
+                create_name = #{createName},
+            </if>
+            <if test="chargeStatus != null">
+                charge_status = #{chargeStatus},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from register where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.DrugDao">
+
+    <resultMap type="com.pj.entity.Drug" id="DrugMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="drugType" column="drug_type" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="specification" column="specification" jdbcType="VARCHAR"/>
+        <result property="efficacyClassification" column="efficacy_classification" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="drugCount" column="drug_count" jdbcType="INTEGER"/>
+        <result property="productionDate" column="production_date" jdbcType="VARCHAR"/>
+        <result property="qualityDate" column="quality_date" jdbcType="VARCHAR"/>
+        <result property="limitStatus" column="limit_status" jdbcType="INTEGER"/>
+        <result property="manufacturer" column="manufacturer" jdbcType="VARCHAR"/>
+        <result property="wholesalePrice" column="wholesale_price" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="INTEGER"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="findAll2" resultMap="DrugMap">
+        select * from drug
+        <where>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="drugType != null and drugType != ''">
+                and drug_type = #{drugType}
+            </if>
+            <if test="unit != null and unit != ''">
+                and unit = #{unit}
+            </if>
+            <if test="specification != null and specification != ''">
+                and specification = #{specification}
+            </if>
+        </where>
+    </select>
+    <select id="findAll1" resultMap="DrugMap">
+        select * from drug
+        <where>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="drugType != null and drugType != ''">
+                and drug_type = #{drugType}
+            </if>
+            <if test="efficacyClassification != null and efficacyClassification != ''">
+                and efficacy_classification = #{efficacyClassification}
+            </if>
+            <if test="limitStatus != null">
+                and limit_status = #{limitStatus}
+            </if>
+        </where>
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DrugMap">
+        select id,
+               name,
+               drug_type,
+               unit,
+               specification,
+               efficacy_classification,
+               price,
+               drug_count,
+               production_date,
+               quality_date,
+               limit_status,
+               manufacturer,
+               wholesale_price,
+               phone,
+               create_datetime
+        from drug
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DrugMap">
+        select
+        id, name, drug_type, unit, specification, efficacy_classification, price, drug_count, production_date,
+        quality_date, limit_status, manufacturer, wholesale_price, phone, create_datetime
+        from drug
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="drugType != null and drugType != ''">
+                and drug_type = #{drugType}
+            </if>
+            <if test="unit != null and unit != ''">
+                and unit = #{unit}
+            </if>
+            <if test="specification != null and specification != ''">
+                and specification = #{specification}
+            </if>
+            <if test="efficacyClassification != null and efficacyClassification != ''">
+                and efficacy_classification = #{efficacyClassification}
+            </if>
+            <if test="price != null and price != ''">
+                and price = #{price}
+            </if>
+            <if test="drugCount != null">
+                and drug_count = #{drugCount}
+            </if>
+            <if test="productionDate != null and productionDate != ''">
+                and production_date = #{productionDate}
+            </if>
+            <if test="qualityDate != null and qualityDate != ''">
+                and quality_date = #{qualityDate}
+            </if>
+            <if test="limitStatus != null">
+                and limit_status = #{limitStatus}
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                and manufacturer = #{manufacturer}
+            </if>
+            <if test="wholesalePrice != null and wholesalePrice != ''">
+                and wholesale_price = #{wholesalePrice}
+            </if>
+            <if test="phone != null">
+                and phone = #{phone}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from drug
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="drugType != null and drugType != ''">
+                and drug_type = #{drugType}
+            </if>
+            <if test="unit != null and unit != ''">
+                and unit = #{unit}
+            </if>
+            <if test="specification != null and specification != ''">
+                and specification = #{specification}
+            </if>
+            <if test="efficacyClassification != null and efficacyClassification != ''">
+                and efficacy_classification = #{efficacyClassification}
+            </if>
+            <if test="price != null and price != ''">
+                and price = #{price}
+            </if>
+            <if test="drugCount != null">
+                and drug_count = #{drugCount}
+            </if>
+            <if test="productionDate != null and productionDate != ''">
+                and production_date = #{productionDate}
+            </if>
+            <if test="qualityDate != null and qualityDate != ''">
+                and quality_date = #{qualityDate}
+            </if>
+            <if test="limitStatus != null">
+                and limit_status = #{limitStatus}
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                and manufacturer = #{manufacturer}
+            </if>
+            <if test="wholesalePrice != null and wholesalePrice != ''">
+                and wholesale_price = #{wholesalePrice}
+            </if>
+            <if test="phone != null">
+                and phone = #{phone}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into drug(name, drug_type, unit, specification, efficacy_classification, price, drug_count,
+                         production_date, quality_date, limit_status, manufacturer, wholesale_price, phone,
+                         create_datetime)
+        values (#{name}, #{drugType}, #{unit}, #{specification}, #{efficacyClassification}, #{price}, #{drugCount},
+                #{productionDate}, #{qualityDate}, #{limitStatus}, #{manufacturer}, #{wholesalePrice}, #{phone},
+                #{createDatetime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into drug(name, drug_type, unit, specification, efficacy_classification, price, drug_count,
+        production_date, quality_date, limit_status, manufacturer, wholesale_price, phone, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.drugType}, #{entity.unit}, #{entity.specification},
+            #{entity.efficacyClassification}, #{entity.price}, #{entity.drugCount}, #{entity.productionDate},
+            #{entity.qualityDate}, #{entity.limitStatus}, #{entity.manufacturer}, #{entity.wholesalePrice},
+            #{entity.phone}, #{entity.createDatetime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into drug(name, drug_type, unit, specification, efficacy_classification, price, drug_count,
+        production_date, quality_date, limit_status, manufacturer, wholesale_price, phone, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.drugType}, #{entity.unit}, #{entity.specification},
+            #{entity.efficacyClassification}, #{entity.price}, #{entity.drugCount}, #{entity.productionDate},
+            #{entity.qualityDate}, #{entity.limitStatus}, #{entity.manufacturer}, #{entity.wholesalePrice},
+            #{entity.phone}, #{entity.createDatetime})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        drug_type = values(drug_type),
+        unit = values(unit),
+        specification = values(specification),
+        efficacy_classification = values(efficacy_classification),
+        price = values(price),
+        drug_count = values(drug_count),
+        production_date = values(production_date),
+        quality_date = values(quality_date),
+        limit_status = values(limit_status),
+        manufacturer = values(manufacturer),
+        wholesale_price = values(wholesale_price),
+        phone = values(phone),
+        create_datetime = values(create_datetime)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update drug
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="drugType != null and drugType != ''">
+                drug_type = #{drugType},
+            </if>
+            <if test="unit != null and unit != ''">
+                unit = #{unit},
+            </if>
+            <if test="specification != null and specification != ''">
+                specification = #{specification},
+            </if>
+            <if test="efficacyClassification != null and efficacyClassification != ''">
+                efficacy_classification = #{efficacyClassification},
+            </if>
+            <if test="price != null and price != ''">
+                price = #{price},
+            </if>
+            <if test="drugCount != null">
+                drug_count = #{drugCount},
+            </if>
+            <if test="productionDate != null and productionDate != ''">
+                production_date = #{productionDate},
+            </if>
+            <if test="qualityDate != null and qualityDate != ''">
+                quality_date = #{qualityDate},
+            </if>
+            <if test="limitStatus != null">
+                limit_status = #{limitStatus},
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                manufacturer = #{manufacturer},
+            </if>
+            <if test="wholesalePrice != null and wholesalePrice != ''">
+                wholesale_price = #{wholesalePrice},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from drug
+        where id = #{id}
+    </delete>
+
+</mapper>
+

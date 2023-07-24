@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.LoginInforDao">
+
+    <resultMap type="com.pj.entity.LoginInfor" id="LoginInforMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="loginIp" column="login_ip" jdbcType="VARCHAR"/>
+        <result property="loginBroswer" column="login_broswer" jdbcType="VARCHAR"/>
+        <result property="loginAddress" column="login_address" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="LoginInforMap">
+        select id,
+               login_ip,
+               login_broswer,
+               login_address,
+               user_id,
+               description,
+               create_datetime
+        from login_infor
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="LoginInforMap">
+        select
+        id, login_ip, login_broswer, login_address, user_id, description, create_datetime
+        from login_infor
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="loginIp != null and loginIp != ''">
+                and login_ip = #{loginIp}
+            </if>
+            <if test="loginBroswer != null and loginBroswer != ''">
+                and login_broswer = #{loginBroswer}
+            </if>
+            <if test="loginAddress != null and loginAddress != ''">
+                and login_address = #{loginAddress}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from login_infor
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="loginIp != null and loginIp != ''">
+                and login_ip = #{loginIp}
+            </if>
+            <if test="loginBroswer != null and loginBroswer != ''">
+                and login_broswer = #{loginBroswer}
+            </if>
+            <if test="loginAddress != null and loginAddress != ''">
+                and login_address = #{loginAddress}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into login_infor(login_ip, login_broswer, login_address, user_id, description, create_datetime)
+        values (#{loginIp}, #{loginBroswer}, #{loginAddress}, #{userId}, #{description}, #{createDatetime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into login_infor(login_ip, login_broswer, login_address, user_id, description, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.loginIp}, #{entity.loginBroswer}, #{entity.loginAddress}, #{entity.userId}, #{entity.description},
+            #{entity.createDatetime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into login_infor(login_ip, login_broswer, login_address, user_id, description, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.loginIp}, #{entity.loginBroswer}, #{entity.loginAddress}, #{entity.userId}, #{entity.description},
+            #{entity.createDatetime})
+        </foreach>
+        on duplicate key update
+        login_ip = values(login_ip),
+        login_broswer = values(login_broswer),
+        login_address = values(login_address),
+        user_id = values(user_id),
+        description = values(description),
+        create_datetime = values(create_datetime)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update login_infor
+        <set>
+            <if test="loginIp != null and loginIp != ''">
+                login_ip = #{loginIp},
+            </if>
+            <if test="loginBroswer != null and loginBroswer != ''">
+                login_broswer = #{loginBroswer},
+            </if>
+            <if test="loginAddress != null and loginAddress != ''">
+                login_address = #{loginAddress},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from login_infor
+        where id = #{id}
+    </delete>
+
+</mapper>
+

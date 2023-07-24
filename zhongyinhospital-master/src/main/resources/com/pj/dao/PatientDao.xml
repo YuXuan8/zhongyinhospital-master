@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pj.dao.PatientDao">
+
+    <resultMap type="com.pj.entity.Patient" id="PatientMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="birthday" column="birthday" jdbcType="VARCHAR"/>
+        <result property="telphone" column="telphone" jdbcType="VARCHAR"/>
+        <result property="cardId" column="card_id" jdbcType="VARCHAR"/>
+        <result property="idCard" column="id_card" jdbcType="VARCHAR"/>
+        <result property="nationality" column="nationality" jdbcType="VARCHAR"/>
+        <result property="career" column="career" jdbcType="VARCHAR"/>
+        <result property="familyHistory" column="family_history" jdbcType="VARCHAR"/>
+        <result property="maritalStatus" column="marital_status" jdbcType="VARCHAR"/>
+        <result property="pastHistory" column="past_history" jdbcType="VARCHAR"/>
+        <result property="personalHistory" column="personal_history" jdbcType="VARCHAR"/>
+        <result property="createDatetime" column="create_datetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="PatientMap">
+        select id,
+               name,
+               sex,
+               age,
+               address,
+               birthday,
+               telphone,
+               card_id,
+               id_card,
+               nationality,
+               career,
+               family_history,
+               marital_status,
+               past_history,
+               personal_history,
+               create_datetime
+        from patient
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PatientMap">
+        select
+        id, name, sex, age, address, birthday, telphone, card_id, id_card, nationality, career, family_history,
+        marital_status, past_history, personal_history, create_datetime
+        from patient
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="birthday != null and birthday != ''">
+                and birthday = #{birthday}
+            </if>
+            <if test="telphone != null and telphone != ''">
+                and telphone = #{telphone}
+            </if>
+            <if test="cardId != null and cardId != ''">
+                and card_id = #{cardId}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card = #{idCard}
+            </if>
+            <if test="nationality != null and nationality != ''">
+                and nationality = #{nationality}
+            </if>
+            <if test="career != null and career != ''">
+                and career = #{career}
+            </if>
+            <if test="familyHistory != null and familyHistory != ''">
+                and family_history = #{familyHistory}
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                and marital_status = #{maritalStatus}
+            </if>
+            <if test="pastHistory != null and pastHistory != ''">
+                and past_history = #{pastHistory}
+            </if>
+            <if test="personalHistory != null and personalHistory != ''">
+                and personal_history = #{personalHistory}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from patient
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="age != null">
+                and age = #{age}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="birthday != null and birthday != ''">
+                and birthday = #{birthday}
+            </if>
+            <if test="telphone != null and telphone != ''">
+                and telphone = #{telphone}
+            </if>
+            <if test="cardId != null and cardId != ''">
+                and card_id = #{cardId}
+            </if>
+            <if test="idCard != null and idCard != ''">
+                and id_card = #{idCard}
+            </if>
+            <if test="nationality != null and nationality != ''">
+                and nationality = #{nationality}
+            </if>
+            <if test="career != null and career != ''">
+                and career = #{career}
+            </if>
+            <if test="familyHistory != null and familyHistory != ''">
+                and family_history = #{familyHistory}
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                and marital_status = #{maritalStatus}
+            </if>
+            <if test="pastHistory != null and pastHistory != ''">
+                and past_history = #{pastHistory}
+            </if>
+            <if test="personalHistory != null and personalHistory != ''">
+                and personal_history = #{personalHistory}
+            </if>
+            <if test="createDatetime != null">
+                and create_datetime = #{createDatetime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into patient(name, sex, age, address, birthday, telphone, card_id, id_card, nationality, career,
+                            family_history, marital_status, past_history, personal_history, create_datetime)
+        values (#{name}, #{sex}, #{age}, #{address}, #{birthday}, #{telphone}, #{cardId}, #{idCard}, #{nationality},
+                #{career}, #{familyHistory}, #{maritalStatus}, #{pastHistory}, #{personalHistory}, #{createDatetime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into patient(name, sex, age, address, birthday, telphone, card_id, id_card, nationality, career,
+        family_history, marital_status, past_history, personal_history, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.sex}, #{entity.age}, #{entity.address}, #{entity.birthday}, #{entity.telphone},
+            #{entity.cardId}, #{entity.idCard}, #{entity.nationality}, #{entity.career}, #{entity.familyHistory},
+            #{entity.maritalStatus}, #{entity.pastHistory}, #{entity.personalHistory}, #{entity.createDatetime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into patient(name, sex, age, address, birthday, telphone, card_id, id_card, nationality, career,
+        family_history, marital_status, past_history, personal_history, create_datetime)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.sex}, #{entity.age}, #{entity.address}, #{entity.birthday}, #{entity.telphone},
+            #{entity.cardId}, #{entity.idCard}, #{entity.nationality}, #{entity.career}, #{entity.familyHistory},
+            #{entity.maritalStatus}, #{entity.pastHistory}, #{entity.personalHistory}, #{entity.createDatetime})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        sex = values(sex),
+        age = values(age),
+        address = values(address),
+        birthday = values(birthday),
+        telphone = values(telphone),
+        card_id = values(card_id),
+        id_card = values(id_card),
+        nationality = values(nationality),
+        career = values(career),
+        family_history = values(family_history),
+        marital_status = values(marital_status),
+        past_history = values(past_history),
+        personal_history = values(personal_history),
+        create_datetime = values(create_datetime)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update patient
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="telphone != null and telphone != ''">
+                telphone = #{telphone},
+            </if>
+            <if test="cardId != null and cardId != ''">
+                card_id = #{cardId},
+            </if>
+            <if test="idCard != null and idCard != ''">
+                id_card = #{idCard},
+            </if>
+            <if test="nationality != null and nationality != ''">
+                nationality = #{nationality},
+            </if>
+            <if test="career != null and career != ''">
+                career = #{career},
+            </if>
+            <if test="familyHistory != null and familyHistory != ''">
+                family_history = #{familyHistory},
+            </if>
+            <if test="maritalStatus != null and maritalStatus != ''">
+                marital_status = #{maritalStatus},
+            </if>
+            <if test="pastHistory != null and pastHistory != ''">
+                past_history = #{pastHistory},
+            </if>
+            <if test="personalHistory != null and personalHistory != ''">
+                personal_history = #{personalHistory},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime},
+            </if>
+        </set>
+        where card_id = #{cardId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from patient
+        where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <script src="/js/common_css.js"></script>
+</head>
+<title>主页</title>
+<link type="text/css" rel="stylesheet" href="/css/mcss/mcss_main.css">
+<link type="text/css" rel="stylesheet" href="/css/preloader.css">
+<link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+<body>
+<div id="preloader">
+    <div id="preloader-inner"></div>
+</div>
+
+<div>
+    <div id="content-wrapper"><!-- class="d-flex flex-column content-wrapper"-->
+        <div id="content">
+            <!--正文-->
+            <div>
+                <!-- 顶部轮播图-->
+                <div class="scroll_box">
+                    <div class="scroll_list">
+                        <ul class="scroll_ul">
+                            <li class="scroll_p4"><a href="#"><img src="/images/img/1.jpg" alt=""/></a></li>
+                            <li class="scroll_p3"><a href="#"><img src="/images/img/2.jpg" alt=""/></a></li>
+                            <li class="scroll_p2"><a href="#"><img src="/images/img/3.jpg" alt=""/></a></li>
+                            <li class="scroll_p1"><a href="#"><img src="/images/img/4.jpg" alt=""/></a></li>
+                        </ul>
+                    </div>
+                    <!-- 轮播图对应跳转链接-->
+                    <div class="scroll_buttons">
+                        <a href="javascript:;"><span class="scroll_blue"></span></a>
+                        <a href="javascript:;"><span></span></a>
+                        <a href="javascript:;"><span></span></a>
+                        <a href="javascript:;"><span></span></a>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4" style="margin-left: 2.5%;margin-top:20px;height: 439px;">
+                    <div class="card-body">
+                        <div style=" margin-left: 1%;margin-right: 1%">
+
+                            <div style="margin-top: 25px;margin-left: 50px">
+                                <div style="width: 5%;float: left;text-align: center;margin-top: 120px;">
+                                    <img class="ann_img" src="/images/icon/annn.png"><br>
+                                    <span>公告</span>
+                                </div>
+                                <div class="layui-collapse" style="margin-left: 8%;" lay-accordion="">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/common_js.js"></script>
+<script type="text/javascript" src="/js/jquery.preloader.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/mjs/mjs_main.js"></script>
+<script>
+    layui.use(['dropdown', 'util', 'layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        $.get('/api/announcement?annStatus=0', function (res) {
+            // $("#ann_display").load(res.data);
+            let html='';
+            $.each(res.data, function (i,obj) {
+                html+='<div class="layui-colla-item"><h2 class="layui-colla-title">'+obj.annDate+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+obj.title+'</h2>' +
+                    '<div class="layui-colla-content '+(i==0? "layui-show":"")+'"><p>'+obj.contents+'</p></div></div>';
+            });
+            $(".layui-collapse").html(html);
+            //从新加载
+            element.render();
+        });
+        //监听折叠
+        element.on('collapse(test)', function(data){
+            layer.msg('展开状态：'+ data.show);
+        });
+    });
+
+</script>
+</body>
+</html>

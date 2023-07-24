@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>字典管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layui/css/layui.css"/>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<div class="demoTable layui-form">
+          类型：
+        <div class="layui-inline">
+            <select name="typeNo" id="typeNo" lay-filter="buildingFilter" lay-search="">
+                <option value="" >请选择</option>
+            </select>
+        </div>
+        名称：
+        <div class="layui-inline">
+            <select name="name" id="name"  lay-search="">
+            </select>
+        </div>
+    <button class="layui-btn" id="searchBtn" data-type="reload">搜索</button>
+</div>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<!-- 自定义的控件 -->
+<div id="toolbar" style="display: none; ">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-sm" lay-event="add" data-method="notice" data-type="auto">添加</button>
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<div id="modal" style="display:none">
+    <form class="layui-form" id="user-add" action="" lay-filter="entity">
+        <input type="text" name="id" id="id"  style="display:none">
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型：</label>
+            <div class="layui-input-inline layui-col-md4">
+                <select name="typeno" id="typeName" lay-search="">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权重：</label>
+            <div class="layui-input-inline layui-col-md4">
+                <input type="text" name="hierarchy" required lay-verify="required" placeholder="权重"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称：</label>
+            <div class="layui-input-inline layui-col-md4">
+                <input type="text" name="name" required lay-verify="required" placeholder="名称"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-inline">
+                <textarea placeholder="备注" name="remark" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                <button style="display: none;" type="reset" class="layui-btn layui-btn-primary swiper-right-form-reset">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/js/jquery-3.3.1.min.js" charset="utf-8"></script>
+<script src="/layui/layui.js" charset="utf-8"></script>
+
+<script>
+    layui.use(['table', 'layer', 'form', 'jquery'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+// 得到字典类型
+        $.get("/api/dicttype/getDictType",function(data){
+            $.each(data.data, function (index, item) {
+                $('#typeNo').append(new Option(item.name, item.typeNo));// 下拉菜单里添加元素
+                $('#typeName').append(new Option(item.name, item.typeNo));// 下拉菜单里添加元素
+            });
+            layui.form.render("select");//重新渲染 固定写法
+        },"json");
+// 得到对应字典类型的字典信息
+        function getDite(data) {
+            var params={
+                typeNo:data.value
+            }
+            //检查项目添加到下拉框中
+            $.get("/api/dite/getDite?typeNo="+data.value,function(data){
+                $("#name").empty();//清空下拉框的值
+                $('#name').append(new Option("请选择",""));// 下拉菜单里添加元素
+                $.each(data.data, function (index, item) {
+                    $('#name').append(new Option(item.name, item.id));// 下拉菜单里添加元素
+                });
+                layui.form.render("select");//重新渲染 固定写法
+            },"json");
+        };
+        // 联动
+        form.on('select(buildingFilter)', function(data){
+            getDite(data);
+        });
+
+        table.render({
+            elem: '#test'
+            , url: '/api/dite/page'
+            // , height: document.body.clientHeight - 180
+            , page: true //开启分页
+            , id: 'testReload'
+            , cols: [[
+                {field: "id", title: "ID"},
+                {field: "typeName", title: "类型"},
+                {field: "name", title: "名称"},
+                {field: "hierarchy", title: "权重"},
+                {field: "remark", title: "备注"},
+                {title: '操作', width: 200, toolbar: '#barDemo', align: 'center'}
+            ]]
+            , toolbar: '#toolbar',//表格头信息
+            response: {	// 设置响应码
+                statusCode: 1 //规定成功的状态码，默认：0
+            },
+            parseData: function (rs) {//数据格式解析
+                if (rs.status == 1) {
+                    return {
+                        "code": rs.status,
+                        "msg": rs.message,
+                        "count": rs.total,
+                        "data": rs.data.list
+                    }
+                }
+            }
+        });
+        //监听事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'add':
+                    //重载实例
+                    open2("添加页面", null);
+                    break;
+            };
+        });
+        //监听工具条
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('真的删除该条信息吗？', function (index) {
+                    $.ajax({
+                        type: "delete",
+                        url: "/api/dite/" + data.id,
+                        dataType: "json",
+                        success: function (da) {
+                            if (da.status == 1) {
+                                layer.msg(da.message)
+                                obj.del(); //删除对应行（tr）的DOM结构
+                            } else {
+                                layer.msg(da.message)
+                            }
+                        },
+                        error: function (da) {
+                            alert("出现错误");
+                            return false;
+                        }
+                    }) //ajax结束
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+                open2("修改页面", obj.data);
+            }
+        });
+
+        //"模态框",
+        function open2(title, entity) {
+            form.val("entity", entity);
+            layer.open({
+                type: 1
+                , title: title
+                , content: $("#modal")
+                , offset: '10px'
+                , area: ['500px', '95%']
+                , end: function () {
+                    $('.swiper-right-form-reset').click()
+                    table.reload('testReload');
+                }
+            });
+        }
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            let data1 = form.val("entity");
+            var type = data1.id ? "put" : "post";
+            $.ajax({
+                url: '/api/dite',
+                type: type,
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(data1),
+                success: function (da) {
+                    if (da.status == 1) {
+                        // layer.alert(da.message, function () {
+                        layer.msg(da.message,{time:1*1000},function() {
+                            layer.closeAll();
+                        });
+                    } else {
+                        layer.msg(da.message);
+                    }
+                }
+            });
+            return false;
+        });
+
+        var $ = layui.$, active = {
+            reload: function () {
+                var name = $('#name');
+                var typeNo = $('#typeNo');
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        "id": name.val(),
+                        "typeNo":typeNo.val()
+                    }
+                });
+            }
+        };
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+</html>

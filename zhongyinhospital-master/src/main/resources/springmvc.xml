@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+	 	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+    <!-- 配置扫描包 -->
+    <context:component-scan base-package="com.pj.controller">
+        <!-- 配置扫描 包含Controller 注解的类,相当于是配置了扫描的白名单-->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+    <!--配置视图解释器，进行页面的跳转-->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--跳转的页面的路径-->
+        <property name="prefix" value="/WEB-INF/view/" />
+        <!--跳转的页面的后缀名称-->
+        <property name="suffix" value=".html" />
+    </bean>
+
+    <!-- 启动 mvc 注解驱动 -->
+    <mvc:annotation-driven/>
+    <!-- 静态资源处理 -->
+    <mvc:default-servlet-handler/>
+
+    <mvc:resources mapping="/css/**" location="/css/" />
+    <mvc:resources mapping="/error/**" location="/error/" />
+    <mvc:resources mapping="/js/**" location="/js/" />
+    <mvc:resources mapping="/sb-admin-2/**" location="/sb-admin-2/" />
+    <mvc:resources mapping="/images/**" location="/images/" />
+    <mvc:resources mapping="/layui/**" location="/layui/" />
+    <mvc:resources mapping="/swagger/**" location="/swagger/" />
+
+
+    <!--  设置对字符串的消息转换器 -->
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain;charset=UTF-8</value>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Jackson 是Spring自带的功能 -->
+    <bean id="mappingJackson2HttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+                <value>application/xml;charset=UTF-8</value>
+                <value>text/html;charset=UTF-8</value>
+                <value>text/plain;charset=UTF-8</value>
+                <value>text/xml;charset=UTF-8</value>
+                <value>text/javascript;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <ref bean="stringHttpMessageConverter"/>
+            <ref bean="mappingJackson2HttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--将swaggerconfig对象交由spring管理-->
+<!--    <bean class="cn.hp.SwaggerConfig.SwaggerConfiguration"/>-->
+    <!-- 文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 上传文件大小限制10M -->
+        <property name="maxUploadSize">
+            <value>10485760</value>
+        </property>
+        <!-- 请求的编码格式, 和 jsp 页面一致 -->
+        <property name="defaultEncoding">
+            <value>UTF-8</value>
+        </property>
+    </bean>
+
+    <!-- 开启aop，对类代理 -->
+    <aop:config proxy-target-class="true"></aop:config>
+
+    <!--配置shiro bean生命周期处理器-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!--配置自动创建代理-->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true" />
+    </bean>
+    <!-- 开启shiro注解的支持 -->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+    </bean>
+</beans>
